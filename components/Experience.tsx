@@ -1,96 +1,244 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { experienceData } from "@/data/experience";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export default function Experience() {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const loadedFramesRef = useRef(0);
+  
+  const contentSectionRef = useRef<HTMLDivElement>(null);
+  const contentBgRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  // Preload Image Sequence (IntersectionObserver)
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+    
+    let observer: IntersectionObserver;
+    
+    const loadImages = () => {
+      const images: HTMLImageElement[] = [];
+      for (let i = 1; i <= 300; i++) {
+        const img = new window.Image();
+        img.onload = () => {
+          loadedFramesRef.current++;
+        };
+        img.src = `/expframes/ezgif-frame-${String(i).padStart(3, '0')}.png`;
+        img.decode().catch(() => {});
+        images.push(img);
+      }
+      imagesRef.current = images;
+    };
+
+    observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadImages();
+        observer.disconnect();
+      }
+    }, { rootMargin: "200px" });
+
+    observer.observe(wrapperRef.current);
+    
+    return () => observer.disconnect();
+  }, []);
+
+  // Set canvas dimensions via ResizeObserver
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (canvasRef.current) {
+          canvasRef.current.width = entry.contentRect.width;
+          canvasRef.current.height = entry.contentRect.height;
+        }
+      }
+    });
+    resizeObserver.observe(canvasRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const renderFrame = (index: number) => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    if (loadedFramesRef.current < 300) {
+      // Draw loading bar
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const barWidth = canvas.width * 0.4;
+      const barHeight = 4;
+      const progress = loadedFramesRef.current / 300;
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      ctx.fillRect((canvas.width - barWidth) / 2, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fillRect((canvas.width - barWidth) / 2, canvas.height / 2 - barHeight / 2, barWidth * progress, barHeight);
+      return;
+    }
+
+    if (imagesRef.current.length < 300) return;
+    const img = imagesRef.current[index - 1];
+    if (!img || !img.complete) return;
+
+    const canvasRatio = canvas.width / canvas.height;
+    const imgRatio = img.width / img.height;
+
+    let drawWidth = canvas.width;
+    let drawHeight = canvas.height;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (canvasRatio > imgRatio) {
+      drawWidth = canvas.height * imgRatio;
+      offsetX = (canvas.width - drawWidth) / 2;
+    } else {
+      drawHeight = canvas.width / imgRatio;
+      offsetY = (canvas.height - drawHeight) / 2;
+    }
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+  };
+
+  useGSAP(() => {
+    if (!wrapperRef.current) return;
+
+    let mm = gsap.matchMedia();
+
+    mm.add({
+      reduceMotion: "(prefers-reduced-motion: reduce)",
+      noReduceMotion: "(prefers-reduced-motion: no-preference)"
+    }, (context) => {
+      let { reduceMotion } = context.conditions as { reduceMotion: boolean };
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapperRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.5,
+          pin: pinnedRef.current,
+          anticipatePin: 1,
+        }
+      });
+
+      const SCRUB_START = 0;
+      const SCRUB_DURATION = 70; // 0-70% scrubs the 300 frames
+      
+      const OVERLAY_START = 70;
+      const OVERLAY_DURATION = 30; // 70-100% fades in the experience data
+
+      if (!reduceMotion) {
+        const frameTracker = { frame: 1 };
+        tl.to(frameTracker, {
+          frame: 300,
+          ease: "none",
+          duration: SCRUB_DURATION,
+          onUpdate: () => {
+            renderFrame(Math.floor(frameTracker.frame));
+          }
+        }, SCRUB_START);
+      } else {
+        tl.to(canvasRef.current, {
+          onStart: () => renderFrame(300),
+          duration: SCRUB_DURATION
+        }, SCRUB_START);
+      }
+
+      // Overlay Cascade
+      tl.set(contentSectionRef.current, { display: "flex" }, OVERLAY_START);
+      
+      tl.fromTo(contentBgRef.current,
+        { opacity: 0 },
+        { opacity: 1, ease: "power2.out", duration: OVERLAY_DURATION * 0.3 },
+        OVERLAY_START
+      );
+      
+      tl.fromTo(headerRef.current, 
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, ease: "power2.out", duration: OVERLAY_DURATION * 0.4 },
+        OVERLAY_START + (OVERLAY_DURATION * 0.1)
+      );
+
+      tl.fromTo(timelineRef.current, 
+        { opacity: 0, x: -50 },
+        { opacity: 1, x: 0, ease: "power2.out", duration: OVERLAY_DURATION * 0.5 },
+        OVERLAY_START + (OVERLAY_DURATION * 0.3)
+      );
+
+    }); // end matchMedia
+  }, { scope: wrapperRef });
+
   return (
-    <section className="min-h-screen flex items-center justify-center border-t border-[#1e1e1e] relative" id="experience">
-      <div className="w-full max-w-4xl mx-auto relative z-10 px-margin-mobile md:px-margin-desktop h-full flex flex-col justify-center py-16">
-        {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center md:text-left"
-        >
-          <span className="font-label-mono text-label-mono text-outline uppercase tracking-widest block mb-2">Chronology</span>
-          <h1 className="font-display-lg text-5xl md:text-7xl text-primary leading-none">Experience</h1>
-        </motion.div>
+    <section ref={wrapperRef} id="experience" className="relative overflow-hidden bg-background" style={{ height: "400vh" }}>
+      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center">
         
-        {/* Vertical Timeline */}
-        <div className="relative w-full border-l border-outline-variant/30 pl-8 md:pl-12 ml-4 md:ml-0 space-y-16 pb-16">
-          {/* Entry 1 */}
-          <motion.article 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative group"
-          >
-            <div className="absolute -left-[41px] md:-left-[57px] top-2 w-3 h-3 bg-primary rounded-full shadow-[2px_2px_0_0_#f2f0ec] group-hover:scale-125 transition-transform duration-300"></div>
-            <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-4">
-              <h2 className="font-headline-lg text-2xl md:text-3xl text-primary">Senior Developer</h2>
-              <span className="font-label-mono text-label-mono text-outline mt-2 md:mt-0">2023 — PRESENT</span>
-            </div>
-            <div className="p-6 md:p-8 bg-[#0e0e0e] border border-outline-variant/50 hover:border-surface-tint hover:-translate-y-1 hover:translate-x-1 hover:shadow-[4px_4px_0_0_#f2f0ec] transition-all duration-300">
-              <p className="font-body-md text-body-md text-on-surface-variant mb-6">
-                Architecting scalable web solutions and leading front-end teams for global enterprise clients. Focus on performance optimization, design system integration, and mentorship.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-3 py-1 border border-outline-variant font-label-mono text-[10px] text-surface-tint uppercase tracking-wider">React</span>
-                <span className="px-3 py-1 border border-outline-variant font-label-mono text-[10px] text-surface-tint uppercase tracking-wider">TypeScript</span>
-                <span className="px-3 py-1 border border-outline-variant font-label-mono text-[10px] text-surface-tint uppercase tracking-wider">WebGL</span>
-              </div>
-            </div>
-          </motion.article>
-          
-          {/* Entry 2 */}
-          <motion.article 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative group"
-          >
-            <div className="absolute -left-[41px] md:-left-[57px] top-2 w-3 h-3 border border-outline-variant bg-transparent rounded-full group-hover:border-primary transition-colors duration-300"></div>
-            <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-4">
-              <h2 className="font-headline-lg text-2xl md:text-3xl text-on-surface">Creative Agency</h2>
-              <span className="font-label-mono text-label-mono text-outline mt-2 md:mt-0">2021 — 2023</span>
-            </div>
-            <div className="p-6 md:p-8 bg-[#0e0e0e] border border-outline-variant/30 hover:border-surface-tint hover:-translate-y-1 hover:translate-x-1 hover:shadow-[2px_2px_0_0_#f2f0ec] transition-all duration-300">
-              <p className="font-body-md text-body-md text-on-surface-variant mb-6">
-                Developed award-winning interactive experiences. Collaborated closely with UI/UX designers to translate high-fidelity prototypes into robust, animated front-end applications.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-3 py-1 border border-outline-variant/50 font-label-mono text-[10px] text-outline uppercase tracking-wider">Vue.js</span>
-                <span className="px-3 py-1 border border-outline-variant/50 font-label-mono text-[10px] text-outline uppercase tracking-wider">GSAP</span>
-                <span className="px-3 py-1 border border-outline-variant/50 font-label-mono text-[10px] text-outline uppercase tracking-wider">Three.js</span>
-              </div>
-            </div>
-          </motion.article>
-          
-          {/* Entry 3 */}
-          <motion.article 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative group"
-          >
-            <div className="absolute -left-[41px] md:-left-[57px] top-2 w-3 h-3 border border-outline-variant/50 bg-transparent rounded-full group-hover:border-outline transition-colors duration-300"></div>
-            <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-4">
-              <h2 className="font-headline-lg text-2xl md:text-3xl text-outline">Startup Innovator</h2>
-              <span className="font-label-mono text-label-mono text-outline/50 mt-2 md:mt-0">2019 — 2021</span>
-            </div>
-            <div className="p-6 md:p-8 border border-outline-variant/20 hover:border-outline-variant/50 transition-colors duration-300">
-              <p className="font-body-md text-body-md text-outline-variant mb-6">
-                Founding engineering team member. Built the MVP from scratch, handling both front-end architecture and initial backend integrations to secure Series A funding.
-              </p>
-              <div className="flex flex-wrap gap-3 opacity-70">
-                <span className="px-3 py-1 border border-outline-variant/30 font-label-mono text-[10px] text-outline uppercase tracking-wider">JavaScript</span>
-                <span className="px-3 py-1 border border-outline-variant/30 font-label-mono text-[10px] text-outline uppercase tracking-wider">Node.js</span>
-                <span className="px-3 py-1 border border-outline-variant/30 font-label-mono text-[10px] text-outline uppercase tracking-wider">SASS</span>
-              </div>
-            </div>
-          </motion.article>
+        {/* CANVAS LAYER */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-40 bg-black">
+          <canvas 
+            ref={canvasRef}
+            className="w-full h-full object-cover"
+          />
         </div>
+
+        {/* EXPERIENCE OVERLAY LAYER */}
+        <div ref={contentSectionRef} className="absolute inset-0 w-full h-full z-50 hidden flex-col items-center pointer-events-auto">
+          <div ref={contentBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-md pointer-events-none opacity-0"></div>
+          
+          <div className="relative z-10 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop h-full flex flex-col pt-24 pb-16 overflow-y-auto">
+            
+            {/* Section Header */}
+            <div ref={headerRef} className="mb-16 text-center md:text-left opacity-0 shrink-0">
+              <span className="font-label-mono text-label-mono text-outline uppercase tracking-widest block mb-2">Chronology</span>
+              <h1 className="font-display-lg text-5xl md:text-7xl text-primary leading-none">Experience</h1>
+            </div>
+            
+            {/* Vertical Timeline */}
+            <div ref={timelineRef} className="relative w-full border-l border-outline-variant/30 pl-8 md:pl-12 ml-4 md:ml-0 space-y-16 pb-16 opacity-0 shrink-0">
+              {experienceData.map((item, index) => (
+                <article 
+                  key={index}
+                  className="relative group"
+                >
+                  <div className={`absolute -left-[41px] md:-left-[57px] top-2 ${item.style.bullet}`}></div>
+                  <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-4">
+                    <h2 className={`font-headline-lg text-2xl md:text-3xl ${item.style.title}`}>{item.role}</h2>
+                    <span className={`font-label-mono text-label-mono mt-2 md:mt-0 ${item.style.date}`}>{item.period}</span>
+                  </div>
+                  <div className={`p-6 md:p-8 ${item.style.card}`}>
+                    <p className={`font-body-md text-body-md mb-6 ${item.style.descriptionText}`}>
+                      {item.description}
+                    </p>
+                    <div className={`flex flex-wrap gap-3 ${item.style.skillsWrapper}`}>
+                      {item.skills.map((skill, i) => (
+                        <span key={i} className={`px-3 py-1 font-label-mono text-[10px] uppercase tracking-wider ${item.style.skillBadge}`}>{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+            
+          </div>
+        </div>
+
       </div>
     </section>
   );

@@ -55,14 +55,20 @@
   --spacing-margin-desktop: 64px;
   --spacing-container-max: 1440px;
 
-  --font-body-md: "Cormorant Garamond", serif;
-  --font-headline-lg: "Cormorant Garamond", serif;
-  --font-display-lg: "Cormorant Garamond", serif;
-  --font-headline-lg-mobile: "Cormorant Garamond", serif;
-  --font-label-mono: "Space Mono", monospace;
-  --font-ui-button: "Space Mono", monospace;
-  --font-unica: "Unica One", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  --font-body-md: var(--font-cormorant), "Cormorant Garamond", serif;
+  --font-headline-lg: var(--font-unica), "Unica One", sans-serif;
+  --font-display-lg: var(--font-unica), "Unica One", sans-serif;
+  --font-headline-lg-mobile: var(--font-unica), "Unica One", sans-serif;
+  --font-label-mono: var(--font-space-mono), "Space Mono", monospace;
+  --font-ui-button: var(--font-space-mono), "Space Mono", monospace;
+  --font-unica: var(--font-unica-one), "Unica One", sans-serif;
+  --font-inter: var(--font-inter), "Inter", sans-serif;
+
+  /* Semantic font aliases */
+  --font-display: var(--font-unica), "Unica One", sans-serif;
+  --font-body: var(--font-cormorant), "Cormorant Garamond", serif;
+  --font-mono: var(--font-space-mono), "Space Mono", monospace;
+  --font-sans: var(--font-inter), "Inter", sans-serif;
 }
 
 @layer base {
@@ -106,7 +112,6 @@
 }
 
 .tunnel-content {
-    transform-style: preserve-3d;
     height: 100%;
     width: 100%;
 }
@@ -151,13 +156,13 @@
 
 /* Brutalist Styles */
 .brutalist-border {
-    border: 1px solid #f2f0ec;
+    border: 1px solid var(--color-primary-fixed);
     transition: all 0.2s ease;
 }
 
 .hard-shadow-box {
-    border: 1px solid #f2f0ec;
-    box-shadow: 2px 2px 0px 0px #f2f0ec;
+    border: 1px solid var(--color-primary-fixed);
+    box-shadow: 2px 2px 0px 0px var(--color-primary-fixed);
     transition: all 0.2s ease;
 }
 
@@ -211,18 +216,18 @@
     transition: transform 0.2s ease, background-color 0.2s ease;
 }
 .tech-row:hover {
-    background-color: #0d0d0d;
+    background-color: var(--color-surface-container-lowest);
     transform: translate(2px, 2px);
-    box-shadow: -2px -2px 0 0 #1e1e1e;
+    box-shadow: -2px -2px 0 0 var(--color-surface-variant);
 }
 
 .tech-pill {
     transition: all 0.2s ease;
 }
 .tech-pill:hover {
-    background-color: #f2f0ec;
-    color: #080808;
-    border-color: #f2f0ec;
+    background-color: var(--color-primary-fixed);
+    color: var(--color-background);
+    border-color: var(--color-primary-fixed);
 }
 
 .tunnel-bg {
@@ -240,7 +245,7 @@
 /* Section 04: Projects Grid tilt effect */
 .perspective-container {
     perspective: 1500px;
-    transform-style: preserve-3d;
+    
 }
 
 .tunnel-item-left {
@@ -266,25 +271,7 @@
     transform: translateZ(100px);
 }
 
-/* Section 05: Terminal Blinking Cursor */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-.cursor-blink {
-    animation: blink 1s step-end infinite;
-    display: inline-block;
-    width: 8px;
-    height: 16px;
-    background-color: currentColor;
-    vertical-align: text-bottom;
-    margin-left: 2px;
-}
 
-.terminal-container {
-    box-shadow: 0 0 0 1px #1e1e1e, 2px 2px 0 0 #f2f0ec;
-    transform: translateZ(0);
-}
 
 /* Section 06: Timeline Item Slide Ins */
 .timeline-item {
@@ -299,11 +286,11 @@
 
 /* Section 07: Reviews Hard Shadows */
 .hard-shadow {
-    box-shadow: 4px 4px 0px 0px #c8c6c3;
+    box-shadow: 4px 4px 0px 0px var(--color-surface-tint);
     transition: all 0.2s ease-out;
 }
 .hard-shadow:hover {
-    box-shadow: 8px 8px 0px 0px #ffffff;
+    box-shadow: 8px 8px 0px 0px var(--color-primary);
     transform: translate(-4px, -4px);
 }
 
@@ -311,19 +298,19 @@
 .brutal-input {
     background: transparent;
     border: none;
-    border-bottom: 1px solid #454742;
-    color: #ffffff;
+    border-bottom: 1px solid var(--color-outline-variant);
+    color: var(--color-primary);
     padding: 8px 0;
     width: 100%;
     transition: border-color 0.3s ease;
 }
 .brutal-input:focus {
     outline: none;
-    border-bottom-color: #ffffff;
+    border-bottom-color: var(--color-primary);
     box-shadow: none;
 }
 .brutal-input::placeholder {
-    color: #c6c7c0;
+    color: var(--color-on-surface-variant);
 }
 
 .link-hover {
@@ -376,4 +363,16 @@
     }
 }
 
+/* Reduced Motion: disable transitions, animations, and film grain */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 
+    .film-grain {
+        display: none;
+    }
+}

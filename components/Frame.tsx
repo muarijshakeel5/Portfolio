@@ -75,9 +75,9 @@ export default function Frame() {
             <button
             onClick={() => setIsEdgeHovered(!isEdgeHovered)}
             className="text-primary hover:text-on-surface transition-colors focus:outline-none flex items-center justify-center cursor-pointer px-4 py-3 bg-background/50 backdrop-blur-md border border-outline-variant/30"
-            aria-label="Toggle Menu"
+            aria-label="Toggle navigation menu"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e5e5e5" strokeWidth="1" strokeLinecap="square">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="square">
               <motion.line 
                 x1={isEdgeHovered ? 12 : 2} 
                 y1={isEdgeHovered ? 2 : 7} 
@@ -114,37 +114,39 @@ export default function Frame() {
                   exit="exit"
                   variants={containerVariants}
                 >
-                  {links.map((link) => {
-                    const isActive = activeSection === link.path.substring(1);
-                    return (
-                      <motion.a
-                        key={link.name}
-                        href={link.path}
-                        className={`font-label-mono text-xs tracking-widest uppercase transition-colors flex items-center gap-3 py-1 ${
-                          isActive ? "text-primary" : "text-outline hover:text-primary"
-                        }`}
-                        onClick={() => setIsEdgeHovered(false)}
-                      >
-                        <span className="flex">
-                          {link.name.split("").map((char, index) => (
-                            <motion.span key={index} variants={letterVariants}>
-                              {char}
-                            </motion.span>
-                          ))}
-                        </span>
-                        {/* Active Indicator Dot */}
-                        <div className="w-1.5 h-1.5 flex items-center justify-center">
-                          {isActive && (
-                            <motion.span 
-                              layoutId="active-nav-dot"
-                              className="w-1.5 h-1.5 rounded-full bg-primary inline-block"
-                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            />
-                          )}
-                        </div>
-                      </motion.a>
-                    );
-                  })}
+                  <nav role="navigation" aria-label="Main navigation" className="flex flex-col items-start space-y-4">
+                    {links.map((link) => {
+                      const isActive = activeSection === link.path.substring(1);
+                      return (
+                        <motion.a
+                          key={link.name}
+                          href={link.path}
+                          className={`font-label-mono text-xs tracking-widest uppercase transition-colors flex items-center gap-3 py-1 ${
+                            isActive ? "text-primary" : "text-outline hover:text-primary"
+                          }`}
+                          onClick={() => setIsEdgeHovered(false)}
+                        >
+                          <span className="flex">
+                            {link.name.split("").map((char, index) => (
+                              <motion.span key={index} variants={letterVariants}>
+                                {char}
+                              </motion.span>
+                            ))}
+                          </span>
+                          {/* Active Indicator Dot */}
+                          <div className="w-1.5 h-1.5 flex items-center justify-center">
+                            {isActive && (
+                              <motion.span 
+                                layoutId="active-nav-dot"
+                                className="w-1.5 h-1.5 rounded-full bg-primary inline-block"
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                              />
+                            )}
+                          </div>
+                        </motion.a>
+                      );
+                    })}
+                  </nav>
                 </motion.div>
               )}
             </AnimatePresence>

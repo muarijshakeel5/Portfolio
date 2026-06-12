@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# legacy utility scripts
+fix*.py
+fix*.js
+patch_*.js
+refactor_*.js
+*.zip
+stitch_*/
+index.html
+index_backup.html

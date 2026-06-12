@@ -1,10 +1,12 @@
+import dynamic from 'next/dynamic';
 import Hero from "@/components/Hero";
-import Skills from "@/components/Skills";
-import Projects from "@/components/Projects";
-import Terminal from "@/components/Terminal";
-import Experience from "@/components/Experience";
-import Reviews from "@/components/Reviews";
-import Contact from "@/components/Contact";
+import SectionSkeleton from "@/components/SectionSkeleton";
+
+const Skills = dynamic(() => import('@/components/Skills'), { ssr: true, loading: () => <SectionSkeleton /> });
+const Projects = dynamic(() => import('@/components/Projects'), { ssr: true, loading: () => <SectionSkeleton /> });
+const Experience = dynamic(() => import('@/components/Experience'), { ssr: true, loading: () => <SectionSkeleton /> });
+const Reviews = dynamic(() => import('@/components/Reviews'), { ssr: true, loading: () => <SectionSkeleton /> });
+const Contact = dynamic(() => import('@/components/Contact'), { ssr: true, loading: () => <SectionSkeleton /> });
 
 export default function Page() {
   return (
@@ -12,7 +14,6 @@ export default function Page() {
       <Hero />
       <Skills />
       <Projects />
-      <Terminal />
       <Experience />
       <Reviews />
       <Contact />
