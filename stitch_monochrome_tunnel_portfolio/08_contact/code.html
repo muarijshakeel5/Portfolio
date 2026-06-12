@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YN - Contact</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&amp;family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* Base typography fallbacks and utilities */
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        
+        /* Film Grain Overlay */
+        .film-grain {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Input styling */
+        .brutal-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid theme('colors.outline-variant');
+            color: theme('colors.primary');
+            padding: 8px 0;
+            width: 100%;
+            transition: border-color 0.3s ease;
+        }
+        .brutal-input:focus {
+            outline: none;
+            border-bottom-color: theme('colors.primary');
+            box-shadow: none;
+        }
+        .brutal-input::placeholder {
+            color: theme('colors.on-surface-variant');
+        }
+
+        /* Link hover effect */
+        .link-hover {
+            position: relative;
+            display: inline-block;
+        }
+        .link-hover::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        .link-hover:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#332f30",
+                        "surface-tint": "#c8c6c3",
+                        "on-surface": "#e5e2e1",
+                        "surface-dim": "#141313",
+                        "on-surface-variant": "#c6c7c0",
+                        "tertiary-fixed": "#e8e1e2",
+                        "on-primary-fixed-variant": "#474744",
+                        "on-secondary-container": "#b9b8b8",
+                        "surface-bright": "#3a3938",
+                        "surface-container": "#201f1f",
+                        "tertiary": "#ffffff",
+                        "on-primary-fixed": "#1b1c1a",
+                        "on-background": "#e5e2e1",
+                        "on-error": "#690005",
+                        "surface": "#141313",
+                        "outline-variant": "#454742",
+                        "inverse-primary": "#5e5e5c",
+                        "inverse-surface": "#e5e2e1",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#e4e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "background": "#080808", /* Overridden per requirements */
+                        "primary-fixed-dim": "#c8c6c3",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "tertiary-fixed-dim": "#ccc5c6",
+                        "primary-container": "#e4e2de",
+                        "secondary-container": "#494949",
+                        "on-tertiary-fixed-variant": "#4a4647",
+                        "tertiary-container": "#e8e1e2",
+                        "on-primary-container": "#656461",
+                        "outline": "#90918b",
+                        "surface-container-high": "#2b2a29",
+                        "surface-container-highest": "#353434",
+                        "surface-container-low": "#1c1b1b",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#313030",
+                        "surface-variant": "#353434",
+                        "on-tertiary-fixed": "#1e1b1c",
+                        "primary-fixed": "#e4e2de",
+                        "on-secondary-fixed-variant": "#474747",
+                        "on-tertiary-container": "#686364",
+                        "secondary": "#c8c6c6",
+                        "on-secondary": "#303030",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "on-primary": "#30312e",
+                        "primary": "#ffffff",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "unit": "4px",
+                        "margin-desktop": "64px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["ebGaramond"],
+                        "headline-lg": ["ebGaramond"],
+                        "display-lg": ["ebGaramond"],
+                        "headline-lg-mobile": ["ebGaramond"],
+                        "label-mono": ["spaceMono"],
+                        "ui-button": ["spaceMono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "display-lg": ["84px", { "lineHeight": "90px", "letterSpacing": "-0.04em", "fontWeight": "300" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "400" }],
+                        "ui-button": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-primary min-h-screen w-full overflow-hidden flex flex-col relative selection:bg-primary selection:text-background">
+<div class="film-grain"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-transparent border-b border-outline-variant flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto left-0 right-0">
+<div class="font-ui-button text-ui-button font-bold tracking-widest text-primary dark:text-tertiary">
+            YN
+        </div>
+<div class="hidden md:flex gap-8">
+<a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:-translate-y-0.5 duration-75" href="#">HERO</a>
+<a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:-translate-y-0.5 duration-75" href="#">ABOUT</a>
+<a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:-translate-y-0.5 duration-75" href="#">SKILLS</a>
+<a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:-translate-y-0.5 duration-75" href="#">PROJECTS</a>
+<a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:-translate-y-0.5 duration-75" href="#">TERMINAL</a>
+<a class="font-label-mono text-label-mono text-primary dark:text-tertiary border-b border-primary dark:border-tertiary pb-1 -translate-y-0.5 duration-75" href="#">CONTACT</a>
+</div>
+<button class="md:hidden text-primary hover:bg-on-surface-variant/10 transition-all p-2 rounded">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</nav>
+<!-- SideNavBar (Desktop only, contextual logic says keep for structural parity) -->
+<aside class="hidden md:flex fixed left-gutter top-1/2 -translate-y-1/2 z-50 flex-col space-y-6 items-center">
+<!-- Not active items -->
+<a aria-label="Tab 01" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">01</span>
+</a>
+<a aria-label="Tab 02" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">02</span>
+</a>
+<a aria-label="Tab 03" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">03</span>
+</a>
+<a aria-label="Tab 04" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">04</span>
+</a>
+<a aria-label="Tab 05" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">05</span>
+</a>
+<!-- Active item (Tab 6 matches CONTACT index in TopNav) -->
+<a aria-label="Tab 06" class="bg-primary dark:bg-tertiary w-3 h-3 rounded-full scale-125 transition-transform group relative" href="#">
+<span class="absolute left-8 font-label-mono text-label-mono text-primary whitespace-nowrap top-1/2 -translate-y-1/2">06</span>
+</a>
+<a aria-label="Tab 07" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">07</span>
+</a>
+<a aria-label="Tab 08" class="border border-outline w-2 h-2 rounded-full hover:scale-110 hover:border-primary dark:hover:border-tertiary transition-transform group relative" href="#">
+<span class="absolute left-8 opacity-0 group-hover:opacity-100 font-label-mono text-label-mono text-outline transition-opacity whitespace-nowrap top-1/2 -translate-y-1/2">08</span>
+</a>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col justify-center items-center pt-24 pb-24 px-gutter md:px-margin-desktop w-full max-w-container-max mx-auto relative z-10">
+<!-- Background Tunnel Effect Container (Subtle depth lines) -->
+<div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden flex justify-center items-center opacity-20">
+<div class="w-[120vw] h-[1228px] border border-outline-variant rounded-full absolute scale-150"></div>
+<div class="w-[90vw] h-[921px] border border-outline-variant rounded-full absolute scale-110"></div>
+<div class="w-[60vw] h-[614px] border border-outline-variant rounded-full absolute scale-75"></div>
+<div class="w-[30vw] h-[307px] border border-outline-variant rounded-full absolute scale-50"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 w-full">
+<!-- Left Side: Heading & Links -->
+<div class="col-span-1 md:col-span-6 flex flex-col justify-center space-y-12">
+<h1 class="font-cormorant text-[80px] md:text-[140px] lg:text-[200px] leading-[0.8] font-light tracking-tighter text-primary uppercase" style="text-shadow: 2px 2px 0px theme('colors.outline-variant');">
+                    LET'S<br/>BUILD
+                </h1>
+<div class="flex flex-col space-y-4 pt-8 border-t border-outline-variant w-max">
+<a class="font-ui-button text-ui-button text-on-surface hover:text-primary link-hover flex items-center gap-2 w-max" href="mailto:hello@example.com">
+                        hello@example.com <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+<a class="font-ui-button text-ui-button text-on-surface hover:text-primary link-hover flex items-center gap-2 w-max" href="#">
+                        GitHub <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+<a class="font-ui-button text-ui-button text-on-surface hover:text-primary link-hover flex items-center gap-2 w-max" href="#">
+                        LinkedIn <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
+</a>
+</div>
+</div>
+<!-- Right Side: Minimal Form -->
+<div class="col-span-1 md:col-span-5 md:col-start-8 flex flex-col justify-center">
+<form class="space-y-12 bg-surface-container-lowest/50 p-8 md:p-12 border border-outline-variant relative">
+<!-- Hard shadow effect -->
+<div class="absolute -right-[2px] -bottom-[2px] w-full h-full border border-primary z-[-1] pointer-events-none"></div>
+<div class="space-y-2">
+<label class="font-label-mono text-label-mono text-outline-variant block uppercase tracking-widest" for="name">Name</label>
+<input class="brutal-input font-body-md text-body-md" id="name" name="name" placeholder="Enter your name" required="" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-mono text-label-mono text-outline-variant block uppercase tracking-widest" for="email">Email</label>
+<input class="brutal-input font-body-md text-body-md" id="email" name="email" placeholder="Enter your email" required="" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-mono text-label-mono text-outline-variant block uppercase tracking-widest" for="message">Message</label>
+<textarea class="brutal-input font-body-md text-body-md resize-none" id="message" name="message" placeholder="Tell me about your project..." required="" rows="4"></textarea>
+</div>
+<button class="font-ui-button text-ui-button border border-primary px-8 py-4 w-full uppercase tracking-widest hover:bg-primary hover:text-background transition-colors flex justify-between items-center group" type="submit">
+<span>Send Message</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="fixed bottom-0 w-full z-40 bg-transparent flex justify-end items-center px-gutter py-8 max-w-container-max mx-auto left-0 right-0">
+<div class="flex items-center gap-8">
+<span class="font-label-mono text-label-mono text-outline">06 / 08</span>
+<div class="flex gap-6">
+<a class="font-label-mono text-label-mono text-outline hover:text-primary transition-colors" href="#">SCROLL</a>
+<a class="font-label-mono text-label-mono text-outline hover:text-primary transition-colors" href="#">EXPLORE</a>
+</div>
+</div>
+</footer>
+</body></html>

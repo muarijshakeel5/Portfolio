@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ABOUT — 02 | YN Portfolio</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config from Guidelines -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#332f30",
+                      "surface-tint": "#c8c6c3",
+                      "on-surface": "#e5e2e1",
+                      "surface-dim": "#141313",
+                      "on-surface-variant": "#c6c7c0",
+                      "tertiary-fixed": "#e8e1e2",
+                      "on-primary-fixed-variant": "#474744",
+                      "on-secondary-container": "#b9b8b8",
+                      "surface-bright": "#3a3938",
+                      "surface-container": "#201f1f",
+                      "tertiary": "#ffffff",
+                      "on-primary-fixed": "#1b1c1a",
+                      "on-background": "#e5e2e1",
+                      "on-error": "#690005",
+                      "surface": "#141313",
+                      "outline-variant": "#454742",
+                      "inverse-primary": "#5e5e5c",
+                      "inverse-surface": "#e5e2e1",
+                      "on-error-container": "#ffdad6",
+                      "secondary-fixed": "#e4e2e2",
+                      "surface-container-lowest": "#0e0e0e",
+                      "background": "#141313",
+                      "primary-fixed-dim": "#c8c6c3",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "tertiary-fixed-dim": "#ccc5c6",
+                      "primary-container": "#e4e2de",
+                      "secondary-container": "#494949",
+                      "on-tertiary-fixed-variant": "#4a4647",
+                      "tertiary-container": "#e8e1e2",
+                      "on-primary-container": "#656461",
+                      "outline": "#90918b",
+                      "surface-container-high": "#2b2a29",
+                      "surface-container-highest": "#353434",
+                      "surface-container-low": "#1c1b1b",
+                      "error": "#ffb4ab",
+                      "inverse-on-surface": "#313030",
+                      "surface-variant": "#353434",
+                      "on-tertiary-fixed": "#1e1b1c",
+                      "primary-fixed": "#e4e2de",
+                      "on-secondary-fixed-variant": "#474747",
+                      "on-tertiary-container": "#686364",
+                      "secondary": "#c8c6c6",
+                      "on-secondary": "#303030",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "on-primary": "#30312e",
+                      "primary": "#ffffff",
+                      "error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "margin-mobile": "20px",
+                      "unit": "4px",
+                      "margin-desktop": "64px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-md": ["EB Garamond", "serif"],
+                      "headline-lg": ["EB Garamond", "serif"],
+                      "display-lg": ["EB Garamond", "serif"],
+                      "headline-lg-mobile": ["EB Garamond", "serif"],
+                      "label-mono": ["Space Mono", "monospace"],
+                      "ui-button": ["Space Mono", "monospace"]
+              },
+              "fontSize": {
+                      "body-md": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                      "display-lg": ["84px", {"lineHeight": "90px", "letterSpacing": "-0.04em", "fontWeight": "300"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                      "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "400"}],
+                      "ui-button": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom Utilities for Brutalist/Cinematic Feel */
+        .brutalist-border {
+            border: 1px solid theme('colors.surface-tint');
+            box-shadow: 2px 2px 0px theme('colors.surface-container-highest');
+            transition: all 0.2s ease;
+        }
+        .brutalist-border:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px transparent;
+        }
+        .film-grain {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: repeating-radial-gradient(circle at 17% 32%, theme('colors.primary'), transparent 0.00085px), repeating-radial-gradient(circle at 83% 68%, theme('colors.on-background'), transparent 0.00085px);
+            background-size: 1px 1px;
+        }
+        
+        /* 3D Tunnel Entrance Animation */
+        .tunnel-enter {
+            opacity: 0;
+            transform: scale(0.8) translateZ(-200px);
+            filter: blur(10px);
+        }
+        .tunnel-enter-active {
+            opacity: 1;
+            transform: scale(1) translateZ(0);
+            filter: blur(0);
+            transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .slide-left-enter { opacity: 0; transform: translateX(-50px); }
+        .slide-right-enter { opacity: 0; transform: translateX(50px); }
+        .slide-enter-active { opacity: 1; transform: translateX(0); transition: all 1s cubic-bezier(0.19, 1, 0.22, 1) 0.3s; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen overflow-hidden selection:bg-primary selection:text-surface">
+<!-- Cinematic Film Grain Overlay -->
+<div class="film-grain"></div>
+<!-- TopNavBar (Shared Component) -->
+<nav class="hidden md:flex bg-transparent fixed top-0 w-full z-50 border-b border-outline-variant">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-container-max mx-auto">
+<div class="font-ui-button text-ui-button font-bold tracking-widest text-primary dark:text-tertiary uppercase">YN</div>
+<ul class="flex space-x-8">
+<li><a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors" href="#">HERO</a></li>
+<li><a class="font-label-mono text-label-mono text-primary dark:text-tertiary border-b border-primary dark:border-tertiary pb-1 translate-y-0.5 duration-75" href="#">ABOUT</a></li>
+<li><a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:bg-on-surface-variant/10 transition-all" href="#">SKILLS</a></li>
+<li><a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:bg-on-surface-variant/10 transition-all" href="#">PROJECTS</a></li>
+<li><a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:bg-on-surface-variant/10 transition-all" href="#">TERMINAL</a></li>
+<li><a class="font-label-mono text-label-mono text-outline dark:text-outline-variant hover:text-primary dark:hover:text-tertiary transition-colors hover:bg-on-surface-variant/10 transition-all" href="#">CONTACT</a></li>
+</ul>
+<div class="flex items-center text-primary dark:text-tertiary">
+<span class="material-symbols-outlined cursor-pointer hover:bg-on-surface-variant/10 p-2 transition-all">menu</span>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<nav class="hidden md:flex bg-transparent fixed left-gutter top-1/2 -translate-y-1/2 z-50 flex-col space-y-6 items-center">
+<div class="mb-8 flex flex-col items-center">
+<span class="font-ui-button text-ui-button text-primary font-bold">INDEX</span>
+<span class="font-label-mono text-label-mono text-outline-variant text-[10px]">NAVIGATION</span>
+</div>
+<div class="flex flex-col space-y-6 items-center group relative">
+<!-- 01 -->
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#">
+<span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">01</span>
+</a>
+<!-- 02 (Active) -->
+<a class="flex items-center justify-center bg-primary dark:bg-tertiary w-3 h-3 rounded-full scale-125 relative" href="#">
+<span class="absolute left-6 font-label-mono text-label-mono text-primary">02</span>
+</a>
+<!-- 03-08 -->
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">03</span></a>
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">04</span></a>
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">05</span></a>
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">06</span></a>
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">07</span></a>
+<a class="flex items-center justify-center border border-outline w-2 h-2 rounded-full hover:scale-110 transition-transform hover:border-primary dark:hover:border-tertiary relative" href="#"><span class="absolute left-6 font-label-mono text-label-mono text-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">08</span></a>
+</div>
+</nav>
+<!-- Footer (Shared Component) -->
+<footer class="hidden md:flex bg-transparent fixed bottom-0 w-full z-40">
+<div class="flex justify-between items-center px-gutter py-8 w-full max-w-container-max mx-auto pl-32">
+<div class="font-label-mono text-label-mono text-outline">01 / 08</div>
+<div class="flex space-x-6">
+<a class="font-label-mono text-label-mono text-outline hover:text-primary transition-colors" href="#">SCROLL</a>
+<a class="font-label-mono text-label-mono text-primary font-bold" href="#">EXPLORE</a>
+</div>
+</div>
+</footer>
+<!-- Main Content Canvas -->
+<main class="w-full h-screen flex items-center justify-center relative perspective-[1000px] overflow-hidden">
+<!-- Background Depth Layer -->
+<div class="absolute inset-0 bg-surface-dim z-0 border border-surface-container-highest m-8 opacity-50 scale-[0.98] tunnel-target"></div>
+<!-- Content Grid -->
+<div class="relative z-10 w-full max-w-container-max mx-auto px-gutter md:px-32 h-full flex items-center tunnel-target">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-16 w-full">
+<!-- Left Column: Stats & Anchor -->
+<div class="md:col-span-5 md:col-start-2 flex flex-col justify-center slide-left-target">
+<div class="mb-12 flex items-center space-x-4">
+<div class="w-8 h-[1px] bg-primary"></div>
+<h2 class="font-label-mono text-label-mono text-primary tracking-widest uppercase">ABOUT — 02</h2>
+</div>
+<div class="space-y-12">
+<div class="flex flex-col border-l border-surface-tint pl-6 hover:border-primary transition-colors duration-500 cursor-default">
+<span class="font-display-lg text-display-lg text-on-background mb-2">4+</span>
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">Years Experience</span>
+</div>
+<div class="flex flex-col border-l border-surface-tint pl-6 hover:border-primary transition-colors duration-500 cursor-default">
+<span class="font-display-lg text-display-lg text-on-background mb-2">30+</span>
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">Projects Delivered</span>
+</div>
+<div class="flex flex-col border-l border-surface-tint pl-6 hover:border-primary transition-colors duration-500 cursor-default">
+<span class="font-display-lg text-display-lg text-on-background mb-2">12+</span>
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">Global Clients</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Narrative & Actions -->
+<div class="md:col-span-6 flex flex-col justify-center slide-right-target">
+<div class="bg-surface-container-lowest p-8 md:p-12 border border-surface-tint relative">
+<!-- Brutalist Corner Accents -->
+<div class="absolute top-0 left-0 w-2 h-2 bg-primary -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-0 right-0 w-2 h-2 bg-primary translate-x-1/2 translate-y-1/2"></div>
+<div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background leading-relaxed mb-12 italic opacity-90">
+                            "A relentless pursuit of architectural elegance in code. I fuse brutalist aesthetics with hyper-performant engineering to construct digital environments that command attention and refuse to be ignored."
+                        </div>
+<div class="grid grid-cols-2 gap-4">
+<button class="brutalist-border flex flex-col items-center justify-center p-6 bg-transparent text-primary hover:bg-primary hover:text-surface-dim font-ui-button text-ui-button uppercase tracking-wider group aspect-square max-h-[160px]">
+<span class="material-symbols-outlined mb-4 text-2xl group-hover:-translate-y-1 transition-transform">download</span>
+<span>Download CV</span>
+</button>
+<button class="brutalist-border flex flex-col items-center justify-center p-6 bg-surface-dim text-primary hover:bg-primary hover:text-surface-dim font-ui-button text-ui-button uppercase tracking-wider group aspect-square max-h-[160px]">
+<span class="material-symbols-outlined mb-4 text-2xl group-hover:rotate-12 transition-transform">code</span>
+<span>View GitHub</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Initial Animation Logic -->
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Apply initial states
+            const tunnelElements = document.querySelectorAll('.tunnel-target');
+            const leftElement = document.querySelector('.slide-left-target');
+            const rightElement = document.querySelector('.slide-right-target');
+
+            tunnelElements.forEach(el => el.classList.add('tunnel-enter'));
+            if(leftElement) leftElement.classList.add('slide-left-enter');
+            if(rightElement) rightElement.classList.add('slide-right-enter');
+
+            // Trigger animations next frame
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    tunnelElements.forEach(el => el.classList.add('tunnel-enter-active'));
+                    if(leftElement) leftElement.classList.add('slide-enter-active');
+                    if(rightElement) rightElement.classList.add('slide-enter-active');
+                }, 50);
+            });
+        });
+    </script>
+</body></html>
