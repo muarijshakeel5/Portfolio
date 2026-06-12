@@ -27,16 +27,39 @@ export default function Skills() {
     if (!wrapperRef.current) return;
     
     const loadImages = () => {
-      const images: HTMLImageElement[] = [];
-      for (let i = 1; i <= 300; i++) {
-        const img = new window.Image();
-        img.onload = () => {
-          loadedFramesRef.current++;
-        };
-        img.src = `/tech-frames/ezgif-frame-${String(i).padStart(3, '0')}.png`;
-        img.decode().catch(() => {});
-        images.push(img);
-      }
+      const images: HTMLImageElement[] = new Array(300);
+      
+      const loadImage = (i: number) => {
+        return new Promise<void>((resolve) => {
+          if (images[i - 1]) return resolve();
+          const img = new window.Image();
+          img.decoding = "async";
+          if (i === 1) img.fetchPriority = "high";
+          img.onload = () => {
+            loadedFramesRef.current++;
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = `/tech-frames/ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
+          images[i - 1] = img;
+        });
+      };
+
+      const loadProgressively = async () => {
+        await loadImage(1);
+        if (canvasRef.current) renderFrame(1);
+
+        const wave2 = [];
+        for (let i = 10; i <= 300; i += 10) wave2.push(loadImage(i));
+        await Promise.all(wave2);
+
+        const wave3 = [];
+        for (let i = 2; i <= 300; i++) {
+          if (i % 10 !== 0) wave3.push(loadImage(i));
+        }
+      };
+
+      loadProgressively();
       imagesRef.current = images;
     };
 
@@ -80,23 +103,32 @@ export default function Skills() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    if (loadedFramesRef.current < 300) {
-      // Draw loading bar
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      const barWidth = canvas.width * 0.4;
-      const barHeight = 4;
-      const progress = loadedFramesRef.current / 300;
-      ctx.fillStyle = "rgba(255,255,255,0.2)";
-      ctx.fillRect((canvas.width - barWidth) / 2, canvas.height / 2 - barHeight / 2, barWidth, barHeight);
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
-      ctx.fillRect((canvas.width - barWidth) / 2, canvas.height / 2 - barHeight / 2, barWidth * progress, barHeight);
-      return;
+    let img = imagesRef.current[index - 1];
+    if (!img || !img.complete) {
+      let found = false;
+      for (let i = index - 2; i >= 0; i--) {
+        if (imagesRef.current[i] && imagesRef.current[i].complete) {
+          img = imagesRef.current[i];
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        for (let i = index; i < 300; i++) {
+          if (imagesRef.current[i] && imagesRef.current[i].complete) {
+            img = imagesRef.current[i];
+            found = true;
+            break;
+          }
+        }
+      }
     }
 
-    if (imagesRef.current.length < 300) return;
-    const img = imagesRef.current[index - 1];
-    if (!img || !img.complete) return;
+    if (!img || !img.complete) {
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
 
     const canvasRatio = canvas.width / canvas.height;
     const imgRatio = img.width / img.height;
