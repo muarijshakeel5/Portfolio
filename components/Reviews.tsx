@@ -32,8 +32,6 @@ export default function Reviews() {
   useEffect(() => {
     if (!wrapperRef.current) return;
     
-    let observer: IntersectionObserver;
-    
     const loadImages = () => {
       const images: HTMLImageElement[] = [];
       for (let i = 1; i <= 300; i++) {
@@ -48,7 +46,7 @@ export default function Reviews() {
       imagesRef.current = images;
     };
 
-    observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         loadImages();
         observer.disconnect();
@@ -63,19 +61,25 @@ export default function Reviews() {
   // Set canvas dimensions via ResizeObserver
   useEffect(() => {
     if (!canvasRef.current) return;
+    let rafId: number;
     const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (canvasRef.current) {
-          canvasRef.current.width = entry.contentRect.width;
-          canvasRef.current.height = entry.contentRect.height;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        for (const entry of entries) {
+          if (canvasRef.current) {
+            canvasRef.current.width = entry.contentRect.width;
+            canvasRef.current.height = entry.contentRect.height;
+            renderFrame(1);
+          }
         }
-      }
+      });
     });
     resizeObserver.observe(canvasRef.current);
-    return () => resizeObserver.disconnect();
+    return () => { resizeObserver.disconnect(); cancelAnimationFrame(rafId); };
+     
   }, []);
 
-  const renderFrame = (index: number) => {
+  function renderFrame(index: number) {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -126,13 +130,13 @@ export default function Reviews() {
   useGSAP(() => {
     if (!wrapperRef.current) return;
 
-    let mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
     mm.add({
       reduceMotion: "(prefers-reduced-motion: reduce)",
       noReduceMotion: "(prefers-reduced-motion: no-preference)"
     }, (context) => {
-      let { reduceMotion } = context.conditions as { reduceMotion: boolean };
+      const { reduceMotion } = context.conditions as { reduceMotion: boolean };
 
       const tl = gsap.timeline({
         scrollTrigger: {

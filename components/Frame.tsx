@@ -18,10 +18,10 @@ const links = [
 
 export default function Frame() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [isEdgeHovered, setIsEdgeHovered] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const { activeSection } = useActiveSection();
   const { hasPlayedIntro } = useIntro();
-  const initialRef = useRef(hasPlayedIntro);
+  const [isInitialRender] = useState(!hasPlayedIntro);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,47 +56,55 @@ export default function Frame() {
 
   return (
     <>
+      {isNavOpen && (
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => setIsNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      
       {/* Frame Elements Container - Positioned relative to the viewport */}
       <div className="fixed inset-0 z-50 pointer-events-none p-4 md:p-[16px]">
         
         {/* Top-Left: Edge Hover Area & Nav Toggle */}
         <div 
-          className="absolute top-4 md:top-[16px] left-4 md:left-[16px] bottom-4 md:bottom-[16px] w-[120px] pointer-events-auto flex flex-col items-start group"
-          onMouseEnter={() => setIsEdgeHovered(true)}
-          onMouseLeave={() => setIsEdgeHovered(false)}
+          className="absolute top-4 md:top-[16px] left-4 md:left-[16px] bottom-4 md:bottom-[16px] w-[120px] pointer-events-auto flex flex-col items-start group z-50"
         >
           {/* Menu Toggle Button */}
           <motion.div
             suppressHydrationWarning
-            initial={initialRef.current ? false : { opacity: 0, y: 15 }}
+            initial={!isInitialRender ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: initialRef.current ? 0 : 3.2, duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
+            transition={{ delay: !isInitialRender ? 0 : 3.2, duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
           >
             <button
-            onClick={() => setIsEdgeHovered(!isEdgeHovered)}
+            onClick={() => setIsNavOpen(!isNavOpen)}
             className="text-primary hover:text-on-surface transition-colors focus:outline-none flex items-center justify-center cursor-pointer px-4 py-3 bg-background/50 backdrop-blur-md border border-outline-variant/30"
             aria-label="Toggle navigation menu"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="square">
               <motion.line 
-                x1={isEdgeHovered ? 12 : 2} 
-                y1={isEdgeHovered ? 2 : 7} 
-                x2={isEdgeHovered ? 12 : 22} 
-                y2={isEdgeHovered ? 22 : 7} 
+                x1={isNavOpen ? 4 : 2} 
+                y1={isNavOpen ? 4 : 7} 
+                x2={isNavOpen ? 20 : 22} 
+                y2={isNavOpen ? 20 : 7} 
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} 
               />
               <motion.line 
-                x1={isEdgeHovered ? 12 : 6} 
-                y1={isEdgeHovered ? 2 : 12} 
-                x2={isEdgeHovered ? 12 : 18} 
-                y2={isEdgeHovered ? 22 : 12} 
+                x1={6} 
+                y1={12} 
+                x2={18} 
+                y2={12} 
+                initial={false}
+                animate={{ opacity: isNavOpen ? 0 : 1 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} 
               />
               <motion.line 
-                x1={isEdgeHovered ? 12 : 2} 
-                y1={isEdgeHovered ? 2 : 17} 
-                x2={isEdgeHovered ? 12 : 22} 
-                y2={isEdgeHovered ? 22 : 17} 
+                x1={isNavOpen ? 4 : 2} 
+                y1={isNavOpen ? 20 : 17} 
+                x2={isNavOpen ? 20 : 22} 
+                y2={isNavOpen ? 4 : 17} 
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} 
               />
             </svg>
@@ -106,7 +114,7 @@ export default function Frame() {
           {/* Typewriter Nav Links */}
           <div className="mt-8 ml-4 flex-1">
             <AnimatePresence>
-              {isEdgeHovered && (
+              {isNavOpen && (
                 <motion.div 
                   className="flex flex-col items-start space-y-4"
                   initial="hidden"
@@ -124,7 +132,7 @@ export default function Frame() {
                           className={`font-label-mono text-xs tracking-widest uppercase transition-colors flex items-center gap-3 py-1 ${
                             isActive ? "text-primary" : "text-outline hover:text-primary"
                           }`}
-                          onClick={() => setIsEdgeHovered(false)}
+                          onClick={() => setIsNavOpen(false)}
                         >
                           <span className="flex">
                             {link.name.split("").map((char, index) => (
@@ -157,9 +165,9 @@ export default function Frame() {
         <motion.div 
           suppressHydrationWarning
           className="absolute bottom-4 md:bottom-[16px] right-4 md:right-[16px] pointer-events-auto"
-          initial={initialRef.current ? false : { opacity: 0, y: 15 }}
+          initial={!isInitialRender ? false : { opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: initialRef.current ? 0 : 3.4, duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
+          transition={{ delay: !isInitialRender ? 0 : 3.4, duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
         >
           <div className="font-label-mono text-xs tracking-widest text-on-surface-variant uppercase bg-background/50 backdrop-blur-md px-4 py-3 border border-outline-variant/30 flex gap-2 items-center">
             <span className="w-2 h-2 rounded-full bg-primary/50 animate-pulse" />

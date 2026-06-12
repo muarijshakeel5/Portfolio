@@ -10,45 +10,8 @@ const ActiveSectionContext = createContext<{
   setActiveSection: () => {},
 });
 
-const sections = [
-  "hero",
-  "about",
-  "skills",
-  "projects",
-  "terminal",
-  "experience",
-  "reviews",
-  "contact"
-];
-
 export const ActiveSectionProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeSection, setActiveSection] = useState("hero");
-
-  useEffect(() => {
-    const handleScroll = () => {
-      let currentSection = "hero";
-      // Trigger update when section takes up the middle of viewport
-      const scrollPosition = window.scrollY + window.innerHeight / 3;
-
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            currentSection = sectionId;
-          }
-        }
-      }
-      setActiveSection(currentSection);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    // Run once on load to set initial state
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <ActiveSectionContext.Provider value={{ activeSection, setActiveSection }}>
@@ -58,3 +21,25 @@ export const ActiveSectionProvider = ({ children }: { children: React.ReactNode 
 };
 
 export const useActiveSection = () => useContext(ActiveSectionContext);
+
+export const useActiveSectionObserver = () => {
+  const { setActiveSection } = useActiveSection();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    const sections = document.querySelectorAll("section[id], div[id='about']");
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+  }, [setActiveSection]);
+};

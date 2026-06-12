@@ -29,8 +29,6 @@ export default function Projects() {
   useEffect(() => {
     if (!wrapperRef.current) return;
     
-    let observer: IntersectionObserver;
-    
     const loadImages = () => {
       const images: HTMLImageElement[] = [];
       for (let i = 1; i <= 300; i++) {
@@ -45,7 +43,7 @@ export default function Projects() {
       imagesRef.current = images;
     };
 
-    observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
         loadImages();
         observer.disconnect();
@@ -60,19 +58,25 @@ export default function Projects() {
   // Set canvas dimensions via ResizeObserver
   useEffect(() => {
     if (!canvasRef.current) return;
+    let rafId: number;
     const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (canvasRef.current) {
-          canvasRef.current.width = entry.contentRect.width;
-          canvasRef.current.height = entry.contentRect.height;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        for (const entry of entries) {
+          if (canvasRef.current) {
+            canvasRef.current.width = entry.contentRect.width;
+            canvasRef.current.height = entry.contentRect.height;
+            renderFrame(1);
+          }
         }
-      }
+      });
     });
     resizeObserver.observe(canvasRef.current);
-    return () => resizeObserver.disconnect();
+    return () => { resizeObserver.disconnect(); cancelAnimationFrame(rafId); };
+     
   }, []);
 
-  const renderFrame = (index: number) => {
+  function renderFrame(index: number) {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -123,13 +127,13 @@ export default function Projects() {
   useGSAP(() => {
     if (!wrapperRef.current) return;
 
-    let mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
     mm.add({
       reduceMotion: "(prefers-reduced-motion: reduce)",
       noReduceMotion: "(prefers-reduced-motion: no-preference)"
     }, (context) => {
-      let { reduceMotion } = context.conditions as { reduceMotion: boolean };
+      const { reduceMotion } = context.conditions as { reduceMotion: boolean };
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -220,7 +224,7 @@ export default function Projects() {
             </div>
             
             {/* 3-Column Grid */}
-            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-gutter opacity-0 shrink-0">
+            <div ref={gridRef} className="perspective-container grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-gutter opacity-0 shrink-0">
               {projects.map((project, idx) => (
                 <article 
                   key={project.title}

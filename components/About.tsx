@@ -26,7 +26,7 @@ export default function About() {
           >
             <div className="mb-12 flex items-center space-x-4">
               <div className="w-8 h-[1px] bg-primary"></div>
-              <h2 className="font-unica text-label-mono text-primary tracking-widest uppercase">ABOUT — 02</h2>
+              <p className="font-unica text-label-mono text-primary tracking-widest uppercase">ABOUT — 02</p>
             </div>
             <div className="space-y-8">
               <div className="flex flex-col border-l border-surface-tint pl-6 hover:border-primary transition-colors duration-500 cursor-default">
@@ -55,7 +55,7 @@ export default function About() {
               <div className="absolute top-0 left-0 w-2 h-2 bg-primary -translate-x-1/2 -translate-y-1/2"></div>
               <div className="absolute bottom-0 right-0 w-2 h-2 bg-primary translate-x-1/2 translate-y-1/2"></div>
               <div className="font-headline-lg text-2xl md:text-3xl text-on-background leading-relaxed mb-12 italic opacity-90">
-                "A relentless pursuit of architectural elegance in code. I fuse brutalist aesthetics with hyper-performant engineering to construct digital environments that command attention and refuse to be ignored."
+                  &quot;Architecture is not about creating a beautiful object, it&apos;s about creating a place where people can thrive.&quot; I fuse brutalist aesthetics with hyper-performant engineering to construct digital environments that command attention and refuse to be ignored.&quot;
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <a href="/cv.pdf" download className="brutalist-border flex flex-col items-center justify-center p-6 bg-transparent text-primary hover:bg-primary hover:text-surface-dim font-ui-button text-ui-button uppercase tracking-wider group aspect-square">

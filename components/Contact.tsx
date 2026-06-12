@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,8 +36,8 @@ export default function Contact() {
       
       setSuccess(true);
       e.currentTarget.reset();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +66,7 @@ export default function Contact() {
               className="font-unica text-[60px] md:text-[100px] lg:text-[140px] leading-[0.8] font-light tracking-tighter text-primary uppercase" 
               style={{ textShadow: "2px 2px 0px var(--color-outline-variant)" }}
             >
-              LET'S<br/>BUILD
+              LET&apos;S<br/>BUILD
             </h1>
             <div className="flex flex-col space-y-4 pt-8 border-t border-outline-variant w-max">
               <a 
@@ -76,13 +77,15 @@ export default function Contact() {
               </a>
               <a 
                 className="font-ui-button text-ui-button text-on-surface hover:text-primary link-hover flex items-center gap-2 w-max text-xs md:text-sm" 
-                href="#"
+                href="https://github.com/muarijshakeel"
+                target="_blank" rel="noopener noreferrer"
               >
                 GitHub <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
               </a>
               <a 
                 className="font-ui-button text-ui-button text-on-surface hover:text-primary link-hover flex items-center gap-2 w-max text-xs md:text-sm" 
-                href="#"
+                href="https://www.linkedin.com/in/muarijshakeel"
+                target="_blank" rel="noopener noreferrer"
               >
                 LinkedIn <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
               </a>

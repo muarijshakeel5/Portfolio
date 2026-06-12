@@ -3,7 +3,7 @@
 import Image from"next/image";
 import Link from"next/link";
 import { motion } from"framer-motion";
-import { useEffect, useRef } from"react";
+import { useEffect, useRef, useState } from "react";
 import { useIntro } from"@/context/IntroContext";
 import gsap from"gsap";
 import { ScrollTrigger } from"gsap/ScrollTrigger";
@@ -37,15 +37,13 @@ export default function Hero() {
  const aboutContentRef = useRef<HTMLDivElement>(null);
 
  const { hasPlayedIntro, isDrawing } = useIntro();
- const initialRef = useRef(hasPlayedIntro);
+ const [isInitialRender] = useState(!hasPlayedIntro);
 
  const loadedFramesRef = useRef(0);
 
  // Preload Image Sequence (IntersectionObserver)
  useEffect(() => {
  if (!wrapperRef.current) return;
- 
- let observer: IntersectionObserver;
  
  const loadImages = () => {
  const images: HTMLImageElement[] = [];
@@ -61,7 +59,7 @@ export default function Hero() {
  imagesRef.current = images;
  };
 
- observer = new IntersectionObserver((entries) => {
+ const observer = new IntersectionObserver((entries) => {
  if (entries[0].isIntersecting) {
  loadImages();
  observer.disconnect();
@@ -73,23 +71,29 @@ export default function Hero() {
  return () => observer.disconnect();
  }, []);
 
- // Set canvas dimensions via ResizeObserver
- useEffect(() => {
- if (!canvasRef.current) return;
- const resizeObserver = new ResizeObserver((entries) => {
- for (let entry of entries) {
- if (canvasRef.current) {
- canvasRef.current.width = entry.contentRect.width;
- canvasRef.current.height = entry.contentRect.height;
- }
- }
- });
- resizeObserver.observe(canvasRef.current);
- return () => resizeObserver.disconnect();
- }, []);
+  // Set canvas dimensions via ResizeObserver
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    let rafId: number;
+    const resizeObserver = new ResizeObserver((entries) => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        for (const entry of entries) {
+          if (canvasRef.current) {
+            canvasRef.current.width = entry.contentRect.width;
+            canvasRef.current.height = entry.contentRect.height;
+            renderFrame(1);
+          }
+        }
+      });
+    });
+    resizeObserver.observe(canvasRef.current);
+    return () => { resizeObserver.disconnect(); cancelAnimationFrame(rafId); };
+     
+  }, []);
 
  // Responsive Object-Cover Canvas Renderer
- const renderFrame = (index: number) => {
+ function renderFrame(index: number) {
  if (!canvasRef.current) return;
 
  const canvas = canvasRef.current;
@@ -167,13 +171,13 @@ export default function Hero() {
 
   gsap.set(portraitRef.current, { transformPerspective: 1200 });
 
-  let mm = gsap.matchMedia();
+  const mm = gsap.matchMedia();
 
   mm.add({
   reduceMotion: "(prefers-reduced-motion: reduce)",
   noReduceMotion: "(prefers-reduced-motion: no-preference)"
   }, (context) => {
-  let { reduceMotion } = context.conditions as { reduceMotion: boolean };
+  const { reduceMotion } = context.conditions as { reduceMotion: boolean };
 
   const tl = gsap.timeline({
   scrollTrigger: {
@@ -242,6 +246,11 @@ export default function Hero() {
   ease:"power2.inOut",
   duration: PHASE_1_DURATION
   }, PHASE_1_START);
+  tl.to(dataFragmentsRef.current, {
+    opacity: 1,
+    ease: "power2.inOut",
+    duration: PHASE_1_DURATION * 0.5
+  }, PHASE_1_START + PHASE_1_DURATION * 0.5);
 
   // PHASE 2: The Shutter Close
   tl.to(letterboxTopRef.current, {
@@ -346,7 +355,7 @@ export default function Hero() {
  suppressHydrationWarning
  id="camera-layer"
  className="w-full h-full min-h-screen flex items-center pt-16 relative"
- initial={initialRef.current ? false : { scale: 6 }}
+ initial={!isInitialRender ? false : { scale: 6 }}
  animate={{ scale: isDrawing ? 6 : 1 }}
  transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
  >
@@ -355,7 +364,7 @@ export default function Hero() {
  <canvas
  ref={canvasRef}
  style={{ imageRendering:"-webkit-optimize-contrast"}}
- className="w-full h-full opacity-0 ]"
+ className="w-full h-full opacity-0"
  aria-label="Cinematic scroll animation"
  role="img"
  />
@@ -372,9 +381,9 @@ export default function Hero() {
  <motion.div
  suppressHydrationWarning
  className="absolute inset-0 w-full h-full"
- initial={initialRef.current ? false : { filter:"blur(40px) brightness(0.4)"}}
+ initial={!isInitialRender ? false : { filter:"blur(40px) brightness(0.4)"}}
  animate={{ filter:"blur(0px) brightness(1)"}}
- transition={{ delay: initialRef.current ? 0 : 2.5, duration: 2.0, ease: [0.19, 1, 0.22, 1] }}
+ transition={{ delay: !isInitialRender ? 0 : 2.5, duration: 2.0, ease: [0.19, 1, 0.22, 1] }}
  >
  <Image
  alt="Cinematic portrait of a developer"
@@ -399,17 +408,17 @@ export default function Hero() {
  <motion.div
  suppressHydrationWarning
  className="w-full flex flex-col items-start"
- initial={initialRef.current ? false : { opacity: 0, y: 15 }}
+ initial={!isInitialRender ? false : { opacity: 0, y: 15 }}
  animate={{ opacity: 1, y: 0 }}
- transition={{ delay: initialRef.current ? 0 : 3.0, duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+ transition={{ delay: !isInitialRender ? 0 : 3.0, duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
  >
  <h1 className="font-unica text-6xl md:text-8xl lg:text-[120px] leading-none tracking-normal text-primary uppercase mb-6 drop-shadow-lg min-h-[120px] md:min-h-[192px] lg:min-h-[240px]">
  Muarij<br />Shakeel
  </h1>
  <div className="flex items-center gap-4 px-6 py-2 rounded-full bg-gradient-to-b from-white/10 to-transparent backdrop-blur-xl border border-white/20 shadow-[inset_0_2px_6px_rgba(255,255,255,0.3),inset_0_-2px_6px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.4)] transition-all duration-500 hover:from-white/20 hover:to-white/5 hover:border-white/30 hover:shadow-[inset_0_2px_8px_rgba(255,255,255,0.4),inset_0_-2px_8px_rgba(0,0,0,0.5),0_12px_32px_rgba(0,0,0,0.5)] mb-8">
- <span className="font-inter text-[10px] tracking-[0.2em] text-white/90 uppercase">
+ <p className="font-inter text-[10px] tracking-[0.2em] text-white/90 uppercase">
  Full-Stack Developer | Business Development Lead
- </span>
+ </p>
  </div>
 
  </motion.div>
@@ -432,7 +441,7 @@ export default function Hero() {
  />
 
  <div ref={vignetteRef}
- className="absolute inset-0 z-30 pointer-events-none opacity-0 ]"
+ className="absolute inset-0 z-30 pointer-events-none opacity-0"
  style={{ background:"radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.9) 100%)"}}
  />
 
@@ -455,11 +464,11 @@ export default function Hero() {
  />
 
  <div ref={exitOverlayRef}
- className="absolute inset-0 bg-black z-50 pointer-events-none opacity-0 ]"
+ className="absolute inset-0 bg-black z-50 pointer-events-none opacity-0"
  />
 
   {/* ABOUT OVERLAY LAYER (Fades in at end of 111 animation) */}
-  <div ref={aboutSectionRef} className="absolute inset-0 w-full h-full z-50 hidden items-center justify-center pointer-events-auto">
+  <div id="about" ref={aboutSectionRef} className="absolute inset-0 w-full h-full z-50 hidden items-center justify-center pointer-events-auto">
       <div ref={aboutBgRef} className="absolute inset-0 bg-black/60 backdrop-blur-sm pointer-events-none opacity-0"></div>
       <div className="relative z-10 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop h-full flex items-center">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-16 w-full py-16">
@@ -470,7 +479,7 @@ export default function Hero() {
           >
             <div className="mb-12 flex items-center space-x-4">
               <div className="w-8 h-[1px] bg-primary"></div>
-              <h2 className="font-unica text-label-mono text-primary tracking-widest uppercase">ABOUT — 02</h2>
+              <p className="font-unica text-label-mono text-primary tracking-widest uppercase">ABOUT — 02</p>
             </div>
             <div className="space-y-8">
               <div className="flex flex-col border-l border-surface-tint pl-6 hover:border-primary transition-colors duration-500 cursor-default">
@@ -496,7 +505,7 @@ export default function Hero() {
               <div className="absolute top-0 left-0 w-2 h-2 bg-primary -translate-x-1/2 -translate-y-1/2"></div>
               <div className="absolute bottom-0 right-0 w-2 h-2 bg-primary translate-x-1/2 translate-y-1/2"></div>
               <div className="font-unica text-2xl md:text-3xl text-on-background leading-relaxed mb-12 italic opacity-90">
-                "A relentless pursuit of architectural elegance in code. I fuse brutalist aesthetics with hyper-performant engineering to construct digital environments that command attention and refuse to be ignored."
+                  &quot;Architecture is not about creating a beautiful object, it&apos;s about creating a place where people can thrive.&quot; I fuse brutalist aesthetics with hyper-performant engineering to construct digital environments that command attention and refuse to be ignored.
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <a href="/cv.pdf" download className="brutalist-border flex flex-col items-center justify-center p-6 bg-transparent text-primary hover:bg-primary hover:text-surface-dim font-unica text-ui-button uppercase tracking-wider group aspect-square">
@@ -517,10 +526,10 @@ export default function Hero() {
  </div>
 
  {/* Signature Logo Watermark Wrapper for Scroll Fade */}
- <div ref={signatureRef as any} className="fixed inset-0 pointer-events-none z-[100]">
+ <div ref={signatureRef} className="fixed inset-0 pointer-events-none z-[100] hidden md:flex items-center justify-center mix-blend-difference">
  <motion.div
  className="absolute pointer-events-none opacity-75"
- initial={!initialRef.current ?"centered":"corner"}
+ initial={isInitialRender ? "centered" : "corner"}
  animate="corner"
  variants={{
  centered: {
