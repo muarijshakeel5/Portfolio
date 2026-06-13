@@ -219,6 +219,7 @@ export default function Hero() {
   scrub: 1.5,
   pin: pinnedRef.current,
   anticipatePin: 1,
+  pinSpacing: false,
   }
   });
 
@@ -237,6 +238,12 @@ export default function Hero() {
 
  const PHASE_5_START = 80;
  const PHASE_5_DURATION = 20; // About cascade 80-100
+
+ const PHASE_6_START = 100;
+ const PHASE_6_DURATION = 20; // 3D Dolby Zoom transition
+
+ const PHASE_7_START = 120;
+ const PHASE_7_DURATION = 30; // Hold transparent state
 
   // We compress phases 1-3 to fit the canvas sequence at the end
   // PHASE 1: Cinematic push in
@@ -362,12 +369,26 @@ export default function Hero() {
   PHASE_5_START + (PHASE_5_DURATION * 0.2)
   );
 
+  // PHASE 6: 3D Dolby Zoom Transition
+  tl.to(pinnedRef.current, {
+    scale: reduceMotion ? 1 : 5,
+    opacity: 0,
+    ease: "power2.in",
+    duration: PHASE_6_DURATION
+  }, PHASE_6_START);
+
+  // PHASE 7: Hold transparent state
+  tl.to(pinnedRef.current, {
+    opacity: 0,
+    duration: PHASE_7_DURATION
+  }, PHASE_7_START);
+
   }); // end matchMedia
   }, { scope: wrapperRef });
 
  return (
- <section ref={wrapperRef} id="hero"className="relative overflow-hidden bg-background"style={{ height:"350vh"}}>
- <div ref={pinnedRef} className="sticky top-0 w-full h-screen overflow-hidden">
+ <section ref={wrapperRef} id="hero" className="relative z-50" style={{ height:"550vh"}}>
+ <div ref={pinnedRef} className="sticky top-0 w-full h-screen overflow-hidden bg-background">
  <style>{`
  #camera-layer {
  transform-origin: calc(104% - 108px) calc(-4% + 57.36px);

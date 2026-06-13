@@ -178,14 +178,28 @@ export default function Reviews() {
           scrub: 1.5,
           pin: pinnedRef.current,
           anticipatePin: 1,
+          pinSpacing: false,
         }
       });
 
-      const SCRUB_START = 0;
-      const SCRUB_DURATION = 70; // 0-70% scrubs the 300 frames
+      const INTRO_START = 0;
+      const INTRO_DURATION = 10;
+
+      const SCRUB_START = 10;
+      const SCRUB_DURATION = 55;
       
-      const OVERLAY_START = 70;
-      const OVERLAY_DURATION = 30; // 70-100% fades in the reviews data
+      const OVERLAY_START = 65;
+      const OVERLAY_DURATION = 15;
+
+      const HOLD_START = 80;
+      const HOLD_DURATION = 20;
+
+      // Digital Matrix Intro
+      tl.fromTo(pinnedRef.current, 
+        { scale: reduceMotion ? 1 : 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, ease: "power2.out", duration: INTRO_DURATION },
+        INTRO_START
+      );
 
       if (!reduceMotion) {
         const frameTracker = { frame: 1 };
@@ -203,6 +217,9 @@ export default function Reviews() {
           duration: SCRUB_DURATION
         }, SCRUB_START);
       }
+
+      // Add a dummy hold to force timeline duration to 100
+      tl.to(pinnedRef.current, { duration: HOLD_DURATION }, HOLD_START);
 
       // Overlay Cascade
       tl.set(contentSectionRef.current, { display: "flex" }, OVERLAY_START);
@@ -229,8 +246,8 @@ export default function Reviews() {
   }, { scope: wrapperRef });
 
   return (
-    <section ref={wrapperRef} id="reviews" className="relative overflow-hidden bg-background" style={{ height: "400vh" }}>
-      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center">
+    <section ref={wrapperRef} id="reviews" className="relative z-10 -mt-[200vh]" style={{ height: "600vh" }}>
+      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center bg-background overflow-hidden">
         
         {/* CANVAS LAYER */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-40 bg-black">

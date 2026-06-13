@@ -172,14 +172,31 @@ export default function Experience() {
           scrub: 1.5,
           pin: pinnedRef.current,
           anticipatePin: 1,
+          pinSpacing: false,
         }
       });
 
-      const SCRUB_START = 0;
-      const SCRUB_DURATION = 70; // 0-70% scrubs the 300 frames
+      const INTRO_START = 0;
+      const INTRO_DURATION = 10;
+
+      const SCRUB_START = 10;
+      const SCRUB_DURATION = 55;
       
-      const OVERLAY_START = 70;
-      const OVERLAY_DURATION = 30; // 70-100% fades in the experience data
+      const OVERLAY_START = 65;
+      const OVERLAY_DURATION = 15;
+
+      const OUTRO_START = 80;
+      const OUTRO_DURATION = 10;
+
+      const HOLD_START = 90;
+      const HOLD_DURATION = 10;
+
+      // Simple Reveal Intro
+      tl.fromTo(pinnedRef.current, 
+        { opacity: 0 },
+        { opacity: 1, ease: "power2.in", duration: INTRO_DURATION },
+        INTRO_START
+      );
 
       if (!reduceMotion) {
         const frameTracker = { frame: 1 };
@@ -219,12 +236,27 @@ export default function Experience() {
         OVERLAY_START + (OVERLAY_DURATION * 0.3)
       );
 
+      // Monitor Dive Outro
+      tl.to(pinnedRef.current, {
+        scale: reduceMotion ? 1 : 15,
+        opacity: 0,
+        transformOrigin: "50% 40%",
+        ease: "power3.in",
+        duration: OUTRO_DURATION
+      }, OUTRO_START);
+
+      // Hold Transparent State
+      tl.to(pinnedRef.current, {
+        opacity: 0,
+        duration: HOLD_DURATION
+      }, HOLD_START);
+
     }); // end matchMedia
   }, { scope: wrapperRef });
 
   return (
-    <section ref={wrapperRef} id="experience" className="relative overflow-hidden bg-background" style={{ height: "400vh" }}>
-      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center">
+    <section ref={wrapperRef} id="experience" className="relative z-20 -mt-[200vh]" style={{ height: "600vh" }}>
+      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center bg-background overflow-hidden">
         
         {/* CANVAS LAYER */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-40 bg-black">

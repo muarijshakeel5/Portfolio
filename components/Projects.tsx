@@ -24,6 +24,7 @@ export default function Projects() {
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const actionRef = useRef<HTMLDivElement>(null);
+  const curtainRef = useRef<HTMLDivElement>(null);
 
   // Preload Image Sequence (IntersectionObserver)
   useEffect(() => {
@@ -175,14 +176,31 @@ export default function Projects() {
           scrub: 1.5,
           pin: pinnedRef.current,
           anticipatePin: 1,
+          pinSpacing: false,
         }
       });
 
-      const SCRUB_START = 0;
-      const SCRUB_DURATION = 70; // 0-70% scrubs the 300 frames
+      const INTRO_START = 0;
+      const INTRO_DURATION = 10;
+
+      const SCRUB_START = 10;
+      const SCRUB_DURATION = 55;
       
-      const OVERLAY_START = 70;
-      const OVERLAY_DURATION = 30; // 70-100% fades in the projects data
+      const OVERLAY_START = 65;
+      const OVERLAY_DURATION = 15;
+
+      const OUTRO_START = 80;
+      const OUTRO_DURATION = 10;
+
+      const HOLD_START = 90;
+      const HOLD_DURATION = 10;
+
+      // Intro Curtain Wipe
+      tl.to(curtainRef.current, {
+        scaleY: 0,
+        ease: "power2.inOut",
+        duration: INTRO_DURATION
+      }, INTRO_START);
 
       if (!reduceMotion) {
         const frameTracker = { frame: 1 };
@@ -228,12 +246,35 @@ export default function Projects() {
         OVERLAY_START + (OVERLAY_DURATION * 0.5)
       );
 
+      // Blast Doors Outro
+      tl.fromTo(pinnedRef.current, 
+        { clipPath: "inset(0% 0% 0% 0%)" },
+        {
+          clipPath: "inset(0% 50% 0% 50%)",
+          ease: "power2.inOut",
+          duration: OUTRO_DURATION,
+          immediateRender: false
+        }, OUTRO_START
+      );
+
+      // Hold Transparent State
+      tl.to(pinnedRef.current, {
+        opacity: 0,
+        duration: HOLD_DURATION
+      }, HOLD_START);
+
     }); // end matchMedia
   }, { scope: wrapperRef });
 
   return (
-    <section ref={wrapperRef} id="projects" className="relative overflow-hidden bg-background" style={{ height: "400vh" }}>
-      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center">
+    <section ref={wrapperRef} id="projects" className="relative z-30 -mt-[200vh]" style={{ height: "600vh" }}>
+      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center bg-background overflow-hidden">
+        
+        {/* CURTAIN LAYER */}
+        <div 
+          ref={curtainRef} 
+          className="absolute inset-0 w-full h-full z-50 bg-background pointer-events-none origin-bottom"
+        />
         
         {/* CANVAS LAYER */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-40 bg-black">

@@ -172,6 +172,7 @@ export default function Skills() {
           scrub: 1.5,
           pin: pinnedRef.current,
           anticipatePin: 1,
+          pinSpacing: false,
         }
       });
 
@@ -180,6 +181,12 @@ export default function Skills() {
       
       const OVERLAY_START = 70;
       const OVERLAY_DURATION = 30; // 70-100% fades in the tech stack data
+
+      const ZOOM_START = 100;
+      const ZOOM_DURATION = 20;
+
+      const HOLD_START = 120;
+      const HOLD_DURATION = 30;
 
       if (!reduceMotion) {
         const frameTracker = { frame: 1 };
@@ -219,12 +226,24 @@ export default function Skills() {
         OVERLAY_START + (OVERLAY_DURATION * 0.3)
       );
 
+      tl.to(pinnedRef.current, {
+        scale: reduceMotion ? 1 : 5,
+        opacity: 0,
+        ease: "power2.in",
+        duration: ZOOM_DURATION
+      }, ZOOM_START);
+
+      tl.to(pinnedRef.current, {
+        opacity: 0,
+        duration: HOLD_DURATION
+      }, HOLD_START);
+
     }); // end matchMedia
   }, { scope: wrapperRef });
 
   return (
-    <section ref={wrapperRef} id="skills" className="relative overflow-hidden bg-background" style={{ height: "400vh" }}>
-      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center">
+    <section ref={wrapperRef} id="skills" className="relative z-40 -mt-[200vh]" style={{ height: "500vh" }}>
+      <div ref={pinnedRef} className="h-screen w-full relative flex items-center justify-center bg-background overflow-hidden">
         
         {/* CANVAS LAYER */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-40 bg-black">
